@@ -98,17 +98,17 @@ func GetTransactions(gto GetTransactionsOptions) (GetTransactionResponse, error)
 	var param string
 
 	if gto.StartDate != -1 {
-		param = "start-date" + strconv.Itoa(gto.StartDate)
+		param = "start-date=" + strconv.Itoa(gto.StartDate)
 		queryStringParamsArr = append(queryStringParamsArr, param)
 	}
 
 	if gto.EndDate != -1 {
-		param = "end-date" + strconv.Itoa(gto.EndDate)
+		param = "end-date=" + strconv.Itoa(gto.EndDate)
 		queryStringParamsArr = append(queryStringParamsArr, param)
 	}
 
 	if gto.Pending != -1 {
-		param = "pending" + strconv.Itoa(gto.Pending)
+		param = "pending=" + strconv.Itoa(gto.Pending)
 		queryStringParamsArr = append(queryStringParamsArr, param)
 	}
 
