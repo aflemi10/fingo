@@ -128,7 +128,6 @@ func GetTransactions(gto GetTransactionsOptions) (GetTransactionResponse, error)
 
 	defer resp.Body.Close()
 
-	// Read the response body
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Printf("Error reading response body: %v\n", err)
@@ -143,19 +142,9 @@ func GetTransactions(gto GetTransactionsOptions) (GetTransactionResponse, error)
 	}
 
 	return apiResponse, nil
-	/*
-		for _, account := range apiResponse.Accounts {
-			fmt.Printf("%s %s: %s\n", account.Org.Name, account.Name, account.Balance)
-			for _, transaction := range account.Transactions {
-				fmt.Printf("\t transaction: %s for $%s\n", transaction.Payee, transaction.Amount)
-			}
-		}*/
-
-	// Output the parsed data
-	//fmt.Printf("ID: %d, Name: %s, Status: %s\n", apiResponse.ID, apiResponse.Name, apiResponse.Status)
-
 }
 
+/*
 func GetInfo() {
-	//Call /info endpoint
 }
+*/
