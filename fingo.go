@@ -3,6 +3,7 @@ package fingo
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -96,6 +97,10 @@ func GetTransactions(gto GetTransactionsOptions) (GetTransactionResponse, error)
 	var apiResponse GetTransactionResponse
 	var queryStringParamsArr []string
 	var param string
+
+	if accessTokenUrl == "" {
+		return apiResponse, errors.New("No access token supplied")
+	}
 
 	if gto.StartDate != -1 {
 		param = "start-date=" + strconv.Itoa(gto.StartDate)
