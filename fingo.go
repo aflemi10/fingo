@@ -21,6 +21,10 @@ type GetTransactionResponse struct {
 	Accounts []Account     `json:"accounts"`
 }
 
+type GetInfoResponse struct {
+	Versions []string `json:"versions"`
+}
+
 // Account struct to represent each account
 type Account struct {
 	Org              Organization  `json:"org"`
@@ -61,22 +65,45 @@ type GetTransactionsOptions struct {
 }
 
 const accountsEndpoint = "/accounts"
+const infoEndpoint = "/info"
 
 var client Client
 
+func ConfigureAccessToken(accessToken string) {
+	client.accessTokenUrl = accessToken
+}
+
 // Get an access token from the setup token obtained from
 // simplefin
-func GetAccessTokenFromSetupToken(setupToken string) string {
+func GetAccessTokenFromSetupToken(setupToken string) (string, error) {
 	decodedBytes, err := base64.StdEncoding.DecodeString(setupToken)
 	if err != nil {
 		log.Fatalf("Failed to decode Base64 string: %v", err)
+		return "", err
 	}
 
 	accessTokenUrl := string(decodedBytes)
 
-	return accessTokenUrl
+	//return accessTokenUrl
 	//send a post request token to the accessTokenUrl
 	//receive a setupToken if the response type is 200
+
+	resp, err := http.Post(accessTokenUrl, "text/plain", nil)
+
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response:", err)
+		return "", err
+	}
+
+	// Store the response in a variable
+	responseString := string(body)
+	return responseString, nil
 }
 
 func NewGetTransactionsOptions() GetTransactionsOptions {
@@ -89,16 +116,12 @@ func NewGetTransactionsOptions() GetTransactionsOptions {
 	return getTransactionsOptions
 }
 
-func ConfigureAccessToken(accessToken string) {
-	client.accessTokenUrl = accessToken
-}
-
 func GetTransactions(gto GetTransactionsOptions) (GetTransactionResponse, error) {
 	var apiResponse GetTransactionResponse
 	var queryStringParamsArr []string
 	var param string
 
-	if accessTokenUrl == "" {
+	if client.accessTokenUrl == "" {
 		return apiResponse, errors.New("No access token supplied")
 	}
 
@@ -149,7 +172,31 @@ func GetTransactions(gto GetTransactionsOptions) (GetTransactionResponse, error)
 	return apiResponse, nil
 }
 
-/*
-func GetInfo() {
+func GetInfo() (GetInfoResponse, error) {
+	var infoResponse GetInfoResponse
+
+	url := client.accessTokenUrl + infoEndpoint
+
+	resp, err := http.Get(url)
+
+	if err != nil {
+		fmt.Printf("Error making GET request %v\n", err)
+		return infoResponse, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return infoResponse, err
+	}
+
+	err = json.Unmarshal(body, &infoResponse)
+	if err != nil {
+		fmt.Printf("Error parsing JSON: %v\n", err)
+		return infoResponse, err
+	}
+
+	return infoResponse, nil
 }
-*/
