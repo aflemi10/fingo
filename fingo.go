@@ -56,6 +56,7 @@ type Transaction struct {
 	Payee        string `json:"payee"`
 	Memo         string `json:"memo"`
 	TransactedAt int    `json:"transacted_at"`
+	Pending      bool   `json:"pending"`
 }
 
 type GetTransactionsOptions struct {
